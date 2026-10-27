@@ -38,6 +38,23 @@ describe("calculator", () => {
     assert.throws(() => calculate("1 % 0"), /Modulo by zero/);
   });
 
+  it("handles right-associative powers and chained unary minus", () => {
+    assert.equal(calculate("2 ^ 2 ^ 3"), 256); // 2 ^ (2 ^ 3), not (2 ^ 2) ^ 3
+    assert.equal(calculate("--5"), 5);
+    assert.equal(calculate("- -5"), 5);
+  });
+
+  it("handles leading and trailing decimal points", () => {
+    assert.equal(calculate(".5 + .5"), 1);
+    assert.equal(calculate("5. + 1"), 6);
+  });
+
+  it("rejects non-finite results and empty parentheses", () => {
+    assert.throws(() => calculate("10 ^ 400"), /not a finite number/);
+    assert.throws(() => calculate("()"), /Malformed/);
+    assert.throws(() => calculate("2 + ()"), /Malformed/);
+  });
+
   it("rejects malformed expressions", () => {
     assert.throws(() => calculate(""), /non-empty/);
     assert.throws(() => calculate("2 +"), /Malformed|operands/);
